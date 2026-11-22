@@ -1,0 +1,181 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>SMF Mobile 3D — Copa Mega</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080f20;color:white;font-family:system-ui,-apple-system,sans-serif;touch-action:none}#game{position:relative;width:100%;height:100dvh;min-height:300px}canvas{position:absolute;inset:0;width:100%;height:100%;display:block}#hud{position:absolute;top:max(10px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);font-weight:900;background:#06172bcc;border:1px solid #8cc8c54d;border-radius:12px;padding:9px 18px;white-space:nowrap;pointer-events:none}#notice{position:absolute;top:57px;left:50%;transform:translateX(-50%);text-align:center;white-space:nowrap;color:#ffe26e;font-weight:bold;text-shadow:0 2px 6px black;pointer-events:none}#bottom{position:absolute;bottom:max(72px,calc(env(safe-area-inset-bottom) + 56px));left:14px;right:14px;display:flex;justify-content:space-between;align-items:end;pointer-events:none}#stick{width:115px;height:115px;border:2px solid #ffffff89;border-radius:50%;background:#111e3fa8;position:relative;pointer-events:auto;touch-action:none}#nub{position:absolute;width:46px;height:46px;background:#75deff;border:3px solid white;border-radius:50%;left:32.5px;top:32.5px;box-shadow:0 0 12px #68d9ff99}.actions{display:flex;gap:9px;align-items:end;pointer-events:auto}button{font-weight:900;color:white;border:2px solid #ffffffa0;border-radius:50%;background:#1866ca;touch-action:manipulation}#pass{height:65px;width:65px}#shoot{height:80px;width:80px;background:#e83558}#sprint,#switch{height:53px;width:53px;background:#0e927d;font-size:10px}#switch{background:#7052ce}select{background:#152d48;color:white;padding:8px;border:1px solid #5ca8b5;border-radius:8px;max-width:165px}#menu p{max-width:470px}#hud{font-size:clamp(9px,2vw,14px)}#menu,#error{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#07172de8;text-align:center;padding:24px;z-index:2}#menu h1{font-size:clamp(58px,16vw,105px);margin:0;color:#55ddff;font-style:italic;line-height:1}#menu h2{font-size:16px;letter-spacing:2px;margin:15px 0;color:#a0ffb4}#start{background:#26df83;color:#061b1b;font-size:17px;border-radius:15px;padding:16px 28px;margin-top:20px}#error{display:none;background:#101825;line-height:1.5}#error p{max-width:450px}#hint{font-size:12px;color:#d9e4f9;margin-top:10px}#pauseButton{position:absolute;top:max(10px,env(safe-area-inset-top));right:12px;z-index:1;padding:9px 13px;background:#122f48e8;border:1px solid #a8ebee9c;border-radius:10px;font-size:13px;display:none}#pauseMenu{position:absolute;inset:0;z-index:5;background:#061326ed;display:none;flex-direction:column;justify-content:center;align-items:center;gap:12px;text-align:center;padding:18px}#pauseMenu h2{font-size:32px;margin:0;color:#71eaff}#pauseMenu button{border-radius:12px;width:min(290px,85vw);padding:14px;background:#1666a4;font-size:17px}#pauseMenu button:first-of-type{background:#1ecf83;color:#08211f}#status{font-size:12px;color:#7eecd1;position:absolute;bottom:4px;left:50%;transform:translateX(-50%);white-space:nowrap;pointer-events:none}@media(max-width:430px){#stick{width:93px;height:93px}#nub{left:23.5px;top:23.5px}#pass{width:57px;height:57px;font-size:11px}#shoot{width:68px;height:68px;font-size:12px}#sprint,#switch{width:48px;height:48px;font-size:9px}.actions{gap:5px}#bottom{left:9px;right:9px}}</style><meta name="theme-color" content="#07172d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="SMF Mobile"><meta name="application-name" content="SMF Mobile"><meta name="description" content="SMF — Súper Mega Football. Fútbol 3D con clubes originales, porteros y controles táctiles."><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icons/icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png"><style>#installGuide{position:absolute;inset:0;z-index:12;background:#061326f7;display:none;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;overflow:auto}#installGuide h2{color:#75e9ff;margin:4px 0 8px}#installGuide p{max-width:490px;line-height:1.5}#installGuide button{background:#1acb88;color:#06172d;border-radius:12px;padding:12px 24px;font-size:15px}#installLink{background:#153e57;color:#fff;border:1px solid #70b8ca;border-radius:12px;padding:10px 14px;margin-top:12px;font-weight:800}#installGuide .sub{color:#b9d7e2;font-size:13px}#installGuide strong{color:#a8f7cd}#game{min-height:300px}@media (display-mode:standalone){#installLink{display:none}}@media(max-height:430px){#installGuide{justify-content:flex-start}#installGuide p{margin:6px}}</style></head><body><div id="game"><canvas id="canvas"></canvas><div id="hud"><span id="teamleft">CHAMPIONS DE PC</span> <span id="score">0 : 0</span> <span id="teamright">MEGA BULBON FC</span></div><div id="notice"></div><button id="pauseButton" type="button" aria-label="Pausar partido">Ⅱ PAUSA</button><div id="pauseMenu"><h2>⏸ PARTIDO EN PAUSA</h2><p>SMF · COPA MEGA</p><button id="resumeButton" type="button">▶ CONTINUAR</button><button id="restartButton" type="button">↻ REINICIAR PARTIDO</button><button id="menuButton" type="button">⌂ MENÚ PRINCIPAL</button><p style="font-size:12px;color:#bad5df">PC: ESC o START del mando · Mobile: botón PAUSA</p></div><div id="bottom"><div id="stick"><div id="nub"></div></div><div class="actions"><button id="switch">CAMBIO</button><button id="sprint">CORRER</button><button id="pass">PASE</button><button id="shoot">TIRO</button></div></div><div id="status">SMF COPA MEGA · WebGL 3D</div><div id="menu"><h2>SÚPER MEGA FOOTBALL</h2><h1>SMF</h1><div style="font-weight:900;font-size:25px" id="edition">MOBILE 3D · COPA MEGA</div><p>Estadio Mega Arena · Porteros inteligentes · 4 clubes · Pausa</p><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><label>Tu club <select id="teamSelect"><option value="0">Champions de PC</option><option value="1">Mega Bulbon FC</option><option value="2">Titanes del Trueno</option><option value="3">Estrella Cósmica</option></select></label><label>Rival <select id="opponentSelect"><option value="1">Mega Bulbon FC</option><option value="0">Champions de PC</option><option value="2">Titanes del Trueno</option><option value="3">Estrella Cósmica</option></select></label></div><button id="start">⚽ JUGAR PARTIDO</button><button id="installLink" type="button">📲 INSTALAR SMF</button><div id="hint">Consejo: gira el iPad en horizontal</div></div><div id="installGuide" role="dialog" aria-label="Instalar SMF"><h2>📲 Instalar SMF Mobile</h2><p id="installGuideText">Para instalar, abre esta página desde Safari o Chrome usando el enlace HTTPS publicado.</p><p class="sub">Después de instalar, SMF puede abrirse desde el ícono de la pantalla de inicio.</p><button id="installClose" type="button">VOLVER AL JUEGO</button></div><div id="error"><h2>⚠️ No se pudo activar el 3D</h2><p>Este visor no permite WebGL. Abre el juego en Safari desde una página web (https://) o en un navegador que permita gráficos 3D. Un archivo HTML en la vista previa de ChatGPT puede bloquearlo.</p><p id="detail"></p></div></div><script>
+(function(){'use strict';
+const canvas=document.getElementById('canvas'),notice=document.getElementById('notice'),menu=document.getElementById('menu'),error=document.getElementById('error');let gl;
+const CLUBS=[{name:'CHAMPIONS DE PC',shirt:[.08,.43,.94],trim:[.97,.86,.19]},{name:'MEGA BULBON FC',shirt:[.78,.08,.3],trim:[.98,.79,.22]},{name:'TITANES DEL TRUENO',shirt:[.38,.18,.82],trim:[.71,.94,.98]},{name:'ESTRELLA CÓSMICA',shirt:[.03,.69,.52],trim:[.94,.94,.98]}];
+let homeIndex=0,awayIndex=1,isPC=false,localTwo=false,gamepads={},secondKeys={},currentPlayer=0,paused=false;
+const launchButton=document.getElementById('start');
+launchButton.addEventListener('click',function(){
+  launchButton.textContent='INICIANDO PARTIDO...';
+  if(!gl){document.getElementById('detail').textContent='No se pudo activar WebGL en este visor. Prueba abrirlo desde Safari como página web HTTPS.';error.style.display='flex';return;}
+  try{homeIndex=Number(document.getElementById('teamSelect').value);awayIndex=Number(document.getElementById('opponentSelect').value);if(homeIndex===awayIndex){awayIndex=(homeIndex+1)%4;document.getElementById('opponentSelect').value=awayIndex;}playing=true;paused=false;document.getElementById('pauseMenu').style.display='none';document.getElementById('pauseButton').style.display='block';launchButton.textContent='⚽ JUGAR PARTIDO';score=[0,0];reset();menu.style.display='none';toast('¡COMIENZA LA COPA MEGA!');render();}
+  catch(e){menu.style.display='flex';launchButton.textContent='REINTENTAR';document.getElementById('hint').textContent='Error: '+e.message;}
+});
+window.addEventListener('error',function(e){document.getElementById('hint').textContent='Error de juego: '+e.message;});
+try{gl=canvas.getContext('webgl',{antialias:true,alpha:false,depth:true,preserveDrawingBuffer:false})||canvas.getContext('experimental-webgl')}catch(e){}
+if(!gl){error.style.display='flex';document.getElementById('detail').textContent='WebGL no disponible en este navegador.';return}
+const vert='attribute vec3 aPos;attribute vec3 aColor;uniform mat4 uVP;varying vec3 vCol;void main(){gl_Position=uVP*vec4(aPos,1.0);vCol=aColor;}';
+const frag='precision mediump float;varying vec3 vCol;void main(){gl_FragColor=vec4(vCol,1.0);}';
+function shader(type,source){let s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s}
+let program;try{program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vert));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,frag));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program)}catch(e){error.style.display='flex';document.getElementById('detail').textContent=e.message;return}
+const aPos=gl.getAttribLocation(program,'aPos'),aColor=gl.getAttribLocation(program,'aColor'),uVP=gl.getUniformLocation(program,'uVP');let buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.enableVertexAttribArray(aPos);gl.enableVertexAttribArray(aColor);gl.vertexAttribPointer(aPos,3,gl.FLOAT,false,24,0);gl.vertexAttribPointer(aColor,3,gl.FLOAT,false,24,12);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.clearColor(.04,.1,.17,1);
+function cross(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}function norm(a){let n=Math.hypot(...a)||1;return a.map(v=>v/n)}function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}
+function mul(a,b){let out=new Float32Array(16);for(let j=0;j<4;j++)for(let i=0;i<4;i++){let n=0;for(let k=0;k<4;k++)n+=a[k*4+i]*b[j*4+k];out[j*4+i]=n}return out}
+function perspective(fov,aspect,near,far){let f=1/Math.tan(fov/2),m=new Float32Array(16);m[0]=f/aspect;m[5]=f;m[10]=(far+near)/(near-far);m[11]=-1;m[14]=2*far*near/(near-far);return m}
+function lookAt(eye,center,up){let z=norm(eye.map((v,i)=>v-center[i])),x=norm(cross(up,z)),y=cross(z,x);return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1])}
+let verts=[];function vertex(a,color){verts.push(a[0],a[1],a[2],color[0],color[1],color[2])}function tri(a,b,c,color){vertex(a,color);vertex(b,color);vertex(c,color)}function quad(a,b,c,d,color){tri(a,b,c,color);tri(a,c,d,color)}function shade(color,s){return color.map(a=>Math.min(1,a*s))}
+function box(x,y,z,w,h,d,color){let x0=x-w/2,x1=x+w/2,y0=y-h/2,y1=y+h/2,z0=z-d/2,z1=z+d/2;
+quad([x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1],shade(color,.9));quad([x1,y0,z0],[x0,y0,z0],[x0,y1,z0],[x1,y1,z0],shade(color,.75));quad([x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0],shade(color,.7));quad([x1,y0,z1],[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],shade(color,.82));quad([x0,y1,z1],[x1,y1,z1],[x1,y1,z0],[x0,y1,z0],shade(color,1.15));quad([x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1],shade(color,.55))}
+function sphere(x,y,z,r,col){let steps=9,rings=7;for(let k=0;k<rings;k++){let a=-Math.PI/2+k*Math.PI/rings,b=-Math.PI/2+(k+1)*Math.PI/rings;for(let j=0;j<steps;j++){let t=j*Math.PI*2/steps,u=(j+1)*Math.PI*2/steps;function pt(v,ang){return[x+r*Math.cos(v)*Math.cos(ang),y+r*Math.sin(v),z+r*Math.cos(v)*Math.sin(ang)]}let A=pt(a,t),B=pt(a,u),C=pt(b,u),D=pt(b,t);quad(A,B,C,D,shade(col,.75+.25*Math.sin(b)+.1*Math.cos(t)))}}}
+function strip(x,z,x2,z2,width,col,y=.02){let dx=x2-x,dz=z2-z,n=Math.hypot(dx,dz)||1,ox=-dz/n*width/2,oz=dx/n*width/2;quad([x+ox,y,z+oz],[x2+ox,y,z2+oz],[x2-ox,y,z2-oz],[x-ox,y,z-oz],col)}
+const white=[.94,.96,.95],grass=[.075,.44,.24];function field(){
+ for(let i=0;i<20;i++)box(0,-.16,-16+i*1.6,18,.3,1.6,i%2?[.07,.43,.22]:[.09,.51,.27]);
+ for(let x of [-9,9])strip(x,-16,x,16,.12,white);
+ for(let z of [-16,16])strip(-9,z,9,z,.12,white);
+ strip(-9,0,9,0,.11,white);
+ for(let k=0;k<48;k++){let a=k*2*Math.PI/48,b=(k+1)*2*Math.PI/48;strip(2*Math.cos(a),2*Math.sin(a),2*Math.cos(b),2*Math.sin(b),.08,white)}
+ for(let sign of [-1,1]){let z=sign*16,z2=sign*10;strip(-4,z,-4,z2,.09,white);strip(4,z,4,z2,.09,white);strip(-4,z2,4,z2,.09,white);goal(sign*16,sign);sphere(0,.05,sign*11.3,.12,white)}
+ // Corner flags and sponsorship panels
+ for(let x of [-8.8,8.8])for(let z of [-15.8,15.8]){box(x,.56,z,.065,1.12,.065,[.91,.92,.94]);box(x+.24,1.03,z,.48,.3,.07,[.98,.82,.18])}
+ for(let z=-14;z<=14;z+=4){box(-9.55,.45,z,.3,.8,3.4,[.07,.56,.72]);box(9.55,.45,z,.3,.8,3.4,[.12,.35,.65])}
+}
+
+function goal(z,sign){let post=[.93,.95,.99],net=[.45,.73,.85];for(let x of [-2.65,2.65]){box(x,1.3,z,.13,2.6,.14,post);box(x,1.3,z+sign*1.9,.05,2.6,.05,net);box(x,2.56,z+sign*.95,.07,.07,1.9,net)}box(0,2.6,z,5.43,.13,.14,post);box(0,2.6,z+sign*1.9,5.4,.05,.05,net);for(let i=0;i<8;i++){let x=-2.65+i*5.3/7;box(x,1.3,z+sign*1.9,.024,2.6,.025,net)}for(let j=0;j<6;j++)box(0,j*2.6/5,z+sign*1.9,5.3,.025,.03,net)}
+function actor(x,z,team,num,t,keeper=false){
+ const club=CLUBS[team],shirt=keeper?[.94,.73,.1]:club.shirt,shorts=keeper?[.14,.14,.18]:club.trim,skin=num%3===0?[.47,.27,.17]:num%3===1?[.92,.67,.48]:[.72,.42,.27];
+ const stride=Math.sin(t)*.19;
+ // Distinct jersey, shorts, socks, head, hair, shoes, shoulders and number patch
+ box(x,1.38,z,.83,.93,.46,shirt);box(x,1.68,z+.24,.4,.09,.04,club.trim);
+ box(x,.86,z,.7,.29,.47,shorts);
+ box(x-.2,.47,z+stride,.25,.7,.27,skin);box(x+.2,.47,z-stride,.25,.7,.27,skin);
+ box(x-.2,.22,z+stride,.27,.35,.29,club.shirt);box(x+.2,.22,z-stride,.27,.35,.29,club.shirt);
+ box(x-.2,.08,z+stride+.13,.36,.13,.5,[.065,.09,.13]);box(x+.2,.08,z-stride+.13,.36,.13,.5,[.065,.09,.13]);
+ box(x-.52,1.36,z,.22,.7,.23,skin);box(x+.52,1.36,z,.22,.7,.23,skin);
+ sphere(x,2.05,z,.33,skin);sphere(x,2.32,z-.06,.26,[.1,.075,.06]);
+ box(x,1.35,z+.245,.16,.22,.025,[.96,.96,.95]);
+ if(keeper){box(x-.56,1.08,z+.05,.22,.18,.35,[.95,.95,.95]);box(x+.56,1.08,z+.05,.22,.18,.35,[.95,.95,.95])}
+}
+
+function stands(){
+ // Multi-tier bowl, colored seats, upper-level roof and lighting rigs
+ box(0,-.9,-23,43,1.8,13,[.12,.19,.27]);box(0,-.9,23,43,1.8,13,[.12,.19,.27]);
+ for(let side of [-1,1]){
+  box(side*17,1.2,0,11,3.5,47,[.14,.2,.3]);
+  box(side*20,4,0,10,2.5,48,[.18,.26,.38]);
+  for(let z=-20;z<=20;z+=2){box(side*16.7,2.9,z,2,.45,1.4,(Math.abs(z)%4)?[.1,.4,.78]:[.95,.7,.13]);box(side*20.3,5,z,2,.42,1.4,(Math.abs(z)%4)?[.78,.14,.34]:[.67,.78,.88])}
+ }
+ for(let side of [-1,1]){
+  box(0,1.2,side*22,39,3.5,9,[.16,.22,.33]);
+  box(0,4,side*25,40,2.5,8,[.22,.28,.4]);
+  for(let x=-17;x<=17;x+=2){box(x,3,side*22,1.4,.45,1.8,(Math.abs(x)%4)?[.07,.48,.75]:[.89,.18,.28]);box(x,5,side*25,1.4,.45,1.8,[.72,.77,.83])}
+ }
+ for(let x of [-22,22])for(let z of [-24,24]){box(x,6,z,.4,12,.4,[.44,.51,.59]);box(x,12,z,3,.25,1,[.92,.94,.83]);for(let j=0;j<3;j++)sphere(x-1+j,11.8,z+.35,.32,[1,.96,.68])}
+ // Expanded upper decks and outer concourses for a larger stadium bowl.
+ for(let side of [-1,1]){
+  box(side*27,7.0,0,8,4.4,57,[.12,.17,.27]);
+  box(side*30.5,10.2,0,7,2.0,59,[.18,.24,.35]);
+  for(let z=-26;z<=26;z+=2){
+   box(side*27.3,9.15,z,2.2,.32,1.4,(Math.abs(z)%6)?[.09,.53,.76]:[.97,.71,.20]);
+   box(side*30.8,11.1,z,2.0,.35,1.4,(Math.abs(z)%4)?[.83,.18,.32]:[.89,.9,.94]);
+  }
+  box(side*32.5,13,0,4,.55,62,[.08,.13,.20]);
+ }
+ for(let side of [-1,1]){
+  box(0,7,side*31,56,4.2,8,[.12,.18,.27]);
+  box(0,10.3,side*34.5,57,2,7,[.18,.24,.35]);
+  for(let x=-25;x<=25;x+=2){
+   box(x,9.2,side*31,1.5,.35,2,[.11,.48,.8]);
+   box(x,11.15,side*34.5,1.5,.35,2,[.9,.27,.33]);
+  }
+  box(0,13,side*36.5,60,.55,4,[.08,.13,.20]);
+ }
+ // Stadium signs and four floodlight banks
+ box(0,8,-28,24,1,2,[.08,.13,.21]);box(0,8,28,24,1,2,[.08,.13,.21]);
+ for(let x of [-32,32])for(let z of [-33,33]){
+  box(x,14,z,.35,14,.35,[.4,.46,.53]);box(x,21,z,4,.4,1.1,[.93,.95,.85]);
+  for(let j=0;j<4;j++)sphere(x-1.5+j,21,z+.38,.32,[1,.97,.72]);
+ }
+}
+
+let you={x:0,z:7},foes=[],mates=[],keeperHome={x:0,z:14.8},keeperAway={x:0,z:-14.8},ball={x:0,z:6.35,vx:0,vz:0,free:false,owner:0},score=[0,0],playing=false,axis={x:0,z:0},running=false,kickCD=0,clock=0,noticeTime=0,shotTime=0,possessTimeout=0;
+function updateScore(){document.getElementById('score').textContent=score[0]+' : '+score[1];document.getElementById('teamleft').textContent=CLUBS[homeIndex].name;document.getElementById('teamright').textContent=CLUBS[awayIndex].name}
+function toast(s){notice.textContent=s;noticeTime=1.5}
+function reset(){you={x:0,z:6};mates=[{x:-5,z:4},{x:4,z:2},{x:-3,z:-1}];foes=[{x:0,z:-3},{x:-5,z:-7},{x:4,z:-9},{x:1,z:-12}];keeperHome={x:0,z:14.9};keeperAway={x:0,z:-14.9};ball={x:0,z:5.2,vx:0,vz:0,free:false,owner:0};kickCD=.5;possessTimeout=0;updateScore()}
+function near(a,b){return Math.hypot(a.x-b.x,a.z-b.z)}
+function kick(power,side=0){if(!playing||paused)return;let player=side===0?you:foes[0];if(!ball.free&&ball.owner!==side)return;if(ball.free&&near(ball,player)>1.3)return;ball.free=true;ball.owner=-1;ball.vz=(side===0?-1:1)*power;ball.vx=(side===0?axis.x:0)*power*.23-ball.x*.20;ball.y=.3;kickCD=.36;shotTime=.8;toast(power>10?'¡DISPARO!':'¡PASE!')}
+function movePlayer(o,dx,dz,dt,speed){let n=Math.max(1,Math.hypot(dx,dz));o.x=Math.max(-8.45,Math.min(8.45,o.x+dx/n*dt*speed));o.z=Math.max(-15.3,Math.min(15.3,o.z+dz/n*dt*speed))}
+function update(dt){if(paused)return;clock+=dt;if(noticeTime>0){noticeTime-=dt;if(noticeTime<=0)notice.textContent=''}if(!playing)return;
+ kickCD=Math.max(0,kickCD-dt);shotTime=Math.max(0,shotTime-dt);possessTimeout=Math.max(0,possessTimeout-dt);
+ let n=Math.max(1,Math.hypot(axis.x,axis.z));movePlayer(you,axis.x/n,axis.z/n,dt,running?9.2:6.4);
+ // Second local human controls the first opposition striker
+ if(localTwo)movePlayer(foes[0],secondAxis.x,secondAxis.z,dt,secondRunning?9.2:6.4);
+ else {let f=foes[0],target=ball.free?ball:(ball.owner===0?you:mates[0]);movePlayer(f,target.x-f.x,target.z-f.z,dt,ball.owner===1?4.8:6.2);}
+ // Friendly players provide passing lanes and pressure when dispossessed
+ mates.forEach((m,i)=>{let tx=ball.owner===1?ball.x+(i-1)*1.3:([-5,4,-2][i]+you.x*.16),tz=ball.owner===1?ball.z+2+i:Math.max(-11,Math.min(10,you.z-3-i*2));movePlayer(m,tx-m.x,tz-m.z,dt,3.3+i*.2)});
+ // Defensive CPU keeps formation and attacks when it wins possession
+ foes.slice(1).forEach((f,i)=>{let tx,tz;if(ball.owner===0){tx=i===0?ball.x+(i%2?2:-2):[-4,3,0][i];tz=i===0?ball.z-2:-5-i*3}else{tx=[-4,4,0][i]+ball.x*.25;tz=Math.min(11,ball.z+2+i*1.9)}movePlayer(f,tx-f.x,tz-f.z,dt,3.4+i*.3)});
+ // Keepers patrol their goal mouths and dive toward shots
+ for(let [g,targetZ] of [[keeperAway,-14.8],[keeperHome,14.8]]){let isThreat=Math.abs(ball.z-targetZ)<8;let tx=isThreat?Math.max(-2.25,Math.min(2.25,ball.x*.95)):0;g.x+=(tx-g.x)*Math.min(1,dt*(isThreat?4.9:2.5));g.z=targetZ;}
+ if(!ball.free){let o=ball.owner===1?foes[0]:you;ball.x=o.x;ball.z=o.z+(ball.owner===0?-.64:.64);ball.y=.27;
+ if(ball.owner===1&&!localTwo){if(near(foes[0],keeperHome)<8&&possessTimeout===0){kick(12,1);possessTimeout=1.3}else if(possessTimeout===0&&near(foes[0],you)<2){kick(6.8,1);possessTimeout=1.1}}}
+ else{ball.x+=ball.vx*dt;ball.z+=ball.vz*dt;ball.vx*=Math.pow(.83,dt);ball.vz*=Math.pow(.83,dt);ball.y=.27+.08*Math.abs(Math.sin(clock*16))*Math.min(1,Math.hypot(ball.vx,ball.vz)/5);
+ if(Math.abs(ball.x)>8.85){ball.x=Math.sign(ball.x)*8.85;ball.vx*=-.45}
+ // Goalkeeper saves: only when ball near keeper and in goal mouth
+ for(let [g,name] of [[keeperAway,'¡ATAJADA DEL PORTERO!'],[keeperHome,'¡ATAJADA!']]){if(Math.abs(ball.x-g.x)<1.15&&Math.abs(ball.z-g.z)<.8){ball.vz*=-.65;ball.vx+=(ball.x-g.x)*1.6;ball.z=g.z+(g===keeperAway?.85:-.85);toast(name);kickCD=.42;break}}
+ if(Math.abs(ball.z)>16.1){if(Math.abs(ball.x)<2.55){if(ball.z<0){score[0]++;toast('⚽ ¡GOOOOL!')}else{score[1]++;toast('⚽ GOL RIVAL')}}else toast('SAQUE DE META');reset();return}
+ if(kickCD===0){if(near(ball,you)<.72){ball.free=false;ball.owner=0;possessTimeout=1.2}
+ else if(near(ball,foes[0])<.78){ball.free=false;ball.owner=1;possessTimeout=.35}
+ else for(let f of foes.slice(1)){if(near(ball,f)<.65){ball.vz=5.3;ball.vx=(ball.x-f.x)*2;kickCD=.5;break}}
+ }}
+ // Contact tackle steals ball
+ if(!ball.free&&ball.owner===0&&near(you,foes[0])<.65&&kickCD===0){ball.owner=1;possessTimeout=.55;toast('¡RECUPERA LA CPU!')}
+ if(!ball.free&&ball.owner===1&&near(you,foes[0])<.72&&kickCD===0){ball.owner=0;possessTimeout=1.2;toast('¡ROBO DE BALÓN!')}
+}
+
+function render(){let w=canvas.clientWidth,h=canvas.clientHeight,d=Math.min(window.devicePixelRatio||1,1.6),cw=Math.round(w*d),ch=Math.round(h*d);if(canvas.width!==cw||canvas.height!==ch){canvas.width=cw;canvas.height=ch}gl.viewport(0,0,cw,ch);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);let aspect=cw/ch;let eye=[aspect>1?43:49,aspect>1?27:34,Math.max(-5,Math.min(5,you.z*.15))+6],center=[0,0,0];const vp=mul(perspective(aspect>1?Math.PI/3.1:Math.PI/2.9,aspect,.1,180),lookAt(eye,center,[0,1,0]));gl.uniformMatrix4fv(uVP,false,vp);verts=[];stands();field();
+ foes.forEach((f,i)=>actor(f.x,f.z,awayIndex,i+7,clock*6+i));mates.forEach((m,i)=>actor(m.x,m.z,homeIndex,i+6,clock*6+i));actor(keeperHome.x,keeperHome.z,homeIndex,1,clock*2,true);actor(keeperAway.x,keeperAway.z,awayIndex,1,clock*2,true);actor(you.x,you.z,homeIndex,9,clock*8);sphere(ball.x,ball.y||.27,ball.z,.255,[.99,.98,.94]);sphere(ball.x+.09,(ball.y||.27)+.15,ball.z+.03,.065,[.05,.07,.1]);
+ gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(verts),gl.DYNAMIC_DRAW);gl.vertexAttribPointer(aPos,3,gl.FLOAT,false,24,0);gl.vertexAttribPointer(aColor,3,gl.FLOAT,false,24,12);gl.drawArrays(gl.TRIANGLES,0,verts.length/6)}
+
+function setPause(value){if(!playing)return;paused=value;document.getElementById('pauseMenu').style.display=paused?'flex':'none';document.getElementById('pauseButton').textContent=paused?'▶ VOLVER':'Ⅱ PAUSA';axis.x=axis.z=0;secondAxis.x=secondAxis.z=0;running=false;secondRunning=false;}
+document.getElementById('pauseButton').addEventListener('click',()=>setPause(!paused));
+document.getElementById('resumeButton').addEventListener('click',()=>setPause(false));
+document.getElementById('restartButton').addEventListener('click',()=>{score=[0,0];reset();setPause(false);toast('¡PARTIDO REINICIADO!')});
+document.getElementById('menuButton').addEventListener('click',()=>{setPause(false);playing=false;menu.style.display='flex';document.getElementById('pauseButton').style.display='none';document.getElementById('notice').textContent=''});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!e.repeat){e.preventDefault();setPause(!paused)}});
+let padPauseHeld=false;function readPadPause(){let buttons=navigator.getGamepads?.();let press=buttons&&Array.from(buttons).some(p=>p?.buttons[9]?.pressed);if(press&&!padPauseHeld)setPause(!paused);padPauseHeld=!!press}
+let previous=0;function frame(now){let dt=Math.min(.05,(now-previous)/1000||.016);previous=now;update(dt);render();requestAnimationFrame(frame)}
+const stick=document.getElementById('stick'),nub=document.getElementById('nub');let pointer=null;function move(e){let r=stick.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,z=e.clientY-r.top-r.height/2,limit=r.width*.3,mag=Math.hypot(x,z),factor=mag>limit?limit/mag:1;x*=factor;z*=factor;axis.x=x/limit;axis.z=z/limit;nub.style.transform='translate('+x+'px,'+z+'px)'}stick.addEventListener('pointerdown',e=>{pointer=e.pointerId;stick.setPointerCapture(pointer);move(e)});stick.addEventListener('pointermove',e=>{if(pointer===e.pointerId)move(e)});function release(e){if(pointer!==e.pointerId)return;pointer=null;axis.x=axis.z=0;nub.style.transform=''}stick.addEventListener('pointerup',release);stick.addEventListener('pointercancel',release);document.getElementById('shoot').addEventListener('click',()=>kick(15));document.getElementById('pass').addEventListener('click',()=>kick(7));document.getElementById('switch').addEventListener('click',()=>{if(!paused&&playing&&mates.length){let previous={x:you.x,z:you.z};you={x:mates[0].x,z:mates[0].z};mates[0]=previous;toast('JUGADOR CAMBIADO')}});const sprint=document.getElementById('sprint');sprint.addEventListener('pointerdown',()=>running=true);sprint.addEventListener('pointerup',()=>running=false);sprint.addEventListener('pointercancel',()=>running=false);let secondAxis={x:0,z:0},secondRunning=false,padState=[{},{ }];let keys={};window.addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key===' ')kick(15);if(e.key.toLowerCase()==='j')kick(7)});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);function readKeys(){
+ secondAxis.x=Number(!!secondKeys.arrowright)-Number(!!secondKeys.arrowleft);secondAxis.z=Number(!!secondKeys.arrowdown)-Number(!!secondKeys.arrowup);secondRunning=!!secondKeys.o;
+ if(isPC&&navigator.getGamepads){let pads=navigator.getGamepads();let a=pads[0],b=pads[1];if(a){axis.x=Math.abs(a.axes[0]||0)>.12?a.axes[0]:0;axis.z=Math.abs(a.axes[1]||0)>.12?a.axes[1]:0;running=!!a.buttons[5]?.pressed;if(a.buttons[0]?.pressed&&!padState[0].wasShoot){kick(15,0);padState[0].wasShoot=true}else if(!a.buttons[0]?.pressed)padState[0].wasShoot=false;if(a.buttons[1]?.pressed&&!padState[0].wasPass){kick(7,0);padState[0].wasPass=true}else if(!a.buttons[1]?.pressed)padState[0].wasPass=false;}
+ if(b&&localTwo){secondAxis.x=Math.abs(b.axes[0]||0)>.12?b.axes[0]:0;secondAxis.z=Math.abs(b.axes[1]||0)>.12?b.axes[1]:0;secondRunning=!!b.buttons[5]?.pressed;if(b.buttons[0]?.pressed&&!padState[1].wasShoot){kick(15,1);padState[1].wasShoot=true}else if(!b.buttons[0]?.pressed)padState[1].wasShoot=false;if(b.buttons[1]?.pressed&&!padState[1].wasPass){kick(7,1);padState[1].wasPass=true}else if(!b.buttons[1]?.pressed)padState[1].wasPass=false;}}
+ if(pointer!==null)return;if(!isPC||!navigator.getGamepads||!navigator.getGamepads()[0]){axis.x=Number(!!keys.d)-Number(!!keys.a);axis.z=Number(!!keys.s)-Number(!!keys.w)}running=!!keys.shift||running&&pointer!==null}function main(t){readKeys();frame(t);}
+// Render WebGL with visible diagnostics if the scene throws an error.
+function tick(t){try{let dt=Math.min(.05,(t-previous)/1000||.016);previous=t;readKeys();readPadPause();update(dt);render();requestAnimationFrame(tick)}catch(e){document.getElementById('hint').textContent='Error 3D: '+e.message;document.getElementById('status').textContent='Error 3D: '+e.message;}}
+if(location.hash.includes('pc')){
+ isPC=true;document.title='SMF PC — Copa Mega 3D';document.getElementById('edition').textContent='PC 3D · COPA MEGA';document.getElementById('bottom').style.display='none';document.getElementById('hint').textContent='J1: WASD · J pase · ESPACIO tiro · SHIFT correr | J2: flechas · K pase · L tiro · O correr | Mandos: sticks y botones';
+ const toggle=document.createElement('label');toggle.style.cssText='display:block;margin:10px;color:#bdebd6;font-weight:800';toggle.innerHTML='<input id="twoplayer" type="checkbox"> 2 jugadores locales (misma PC)';launchButton.before(toggle);localTwo=false;
+ document.getElementById('twoplayer').addEventListener('change',e=>localTwo=e.target.checked);
+ window.addEventListener('keydown',e=>{let k=e.key.toLowerCase();secondKeys[k]=true;if(localTwo&&k==='l')kick(15,1);if(localTwo&&k==='k')kick(7,1)});window.addEventListener('keyup',e=>secondKeys[e.key.toLowerCase()]=false);
+}
+requestAnimationFrame(tick);
+})();
+</script><script>
+(function(){
+  'use strict';
+  var guide=document.getElementById('installGuide'),link=document.getElementById('installLink'),close=document.getElementById('installClose'),desc=document.getElementById('installGuideText');
+  var installEvent=null;
+  window.addEventListener('beforeinstallprompt',function(event){event.preventDefault();installEvent=event;});
+  function isIOS(){return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+  function standalone(){return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}
+  function instructions(){
+    if(standalone()){desc.textContent='SMF ya está instalado y abierto como aplicación.';return}
+    if(location.protocol==='file:'){desc.textContent='Este archivo descargado no se puede instalar como PWA. Primero hay que publicar el contenido del ZIP en un sitio HTTPS gratuito (por ejemplo GitHub Pages).';return}
+    if(isIOS()){desc.innerHTML='En <strong>Safari</strong>, toca <strong>Compartir</strong> (cuadrado con flecha), elige <strong>Añadir a pantalla de inicio</strong> y confirma <strong>Añadir</strong>.';return}
+    desc.innerHTML='En <strong>Chrome</strong>, toca el menú <strong>⋮</strong> y elige <strong>Instalar aplicación</strong> o <strong>Añadir a pantalla principal</strong>.';
+  }
+  link.addEventListener('click',function(){instructions();guide.style.display='flex'});
+  close.addEventListener('click',function(){guide.style.display='none'});
+  if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1')){
+    window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(function(e){console.warn('SMF offline no disponible:',e.message)})});
+  }
+})();
+</script></body></html>
